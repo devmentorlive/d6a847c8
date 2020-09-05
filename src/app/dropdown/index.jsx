@@ -3,6 +3,8 @@ import "./styles.css";
 
 export default function Dropdown({
   options,
+  id,
+  label,
   prompt,
   value,
   onChange,
@@ -26,13 +28,14 @@ export default function Dropdown({
         onClick={() => setOpen((prev) => !prev)}
       >
         <div className='selected-value' ref={ref}>
-          {value ? value.name : prompt}
+          {value ? value[label] : prompt}
         </div>
         <div className={`arrow ${open ? "open" : null}`} />
       </div>
       <div className={`options ${open ? "open" : null}`}>
         {options.map((option) => (
           <div
+            key={option[id]}
             className={`option ${
               value === option ? "selected" : null
             }`}
@@ -41,7 +44,7 @@ export default function Dropdown({
               setOpen(false);
             }}
           >
-            {option.name}
+            {option[label]}
           </div>
         ))}
       </div>
