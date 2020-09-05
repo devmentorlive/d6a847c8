@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./styles.css";
 
 export default function Dropdown({
@@ -8,6 +8,16 @@ export default function Dropdown({
   onChange,
 }) {
   const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    document.addEventListener("click", close);
+    return () => document.removeEventListener("click", close);
+  }, []);
+
+  function close(e) {
+    setOpen(e && e.target === ref.current);
+  }
 
   return (
     <div className='dropdown'>
@@ -15,7 +25,7 @@ export default function Dropdown({
         className='control'
         onClick={() => setOpen((prev) => !prev)}
       >
-        <div className='selected-value'>
+        <div className='selected-value' ref={ref}>
           {value ? value.name : prompt}
         </div>
         <div className={`arrow ${open ? "open" : null}`} />
