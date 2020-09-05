@@ -1,21 +1,32 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./styles.css";
 
 export default function Dropdown({
-  prompt = "Select one",
+  options,
+  id,
+  label,
+  prompt,
   value,
   onChange,
-  options,
-  label,
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const ddRef = useRef(null);
+  const ref = useRef(null);
 
   useEffect(() => {
-    addClickHandlers();
-    return () => removeClickHandlers();
-  });
+    ["click", "touchend"].forEach((e) => {
+      document.addEventListener(e, toggle);
+    });
+
+    return () =>
+      ["click", "touchend"].forEach((e) => {
+        document.removeEventListener(e, toggle);
+      });
+  }, []);
+
+  function toggle(e) {
+    setOpen(e && e.target === ref.current);
+  }
 
   function filter(options) {
     return options.filter(
@@ -24,68 +35,50 @@ export default function Dropdown({
     );
   }
 
-  function addClickHandlers() {
-    ["click", "touchend"].map((e) =>
-      document.addEventListener(e, toggle, false)
-    );
-  }
-
-  function removeClickHandlers() {
-    ["click", "touchend"].map((e) =>
-      document.addEventListener(e, toggle, false)
-    );
-  }
-
-  function toggle(e) {
-    setOpen(e && e.target === ddRef.current);
-  }
-
   function displayValue() {
     if (query.length > 0) return query;
     if (value) return value[label];
+    return "";
   }
 
   function selectOption(option) {
     setQuery("");
     onChange(option);
-    toggle();
+    setOpen(false);
   }
 
   return (
-    <div style={{ width: "200px" }}>
-      <div className='dropdown'>
-        <div className='control'>
-          <div className='selected-value'>
-            <input
-              type='text'
-              placeholder={value ? value[label] : prompt}
-              ref={ddRef}
-              onMouseDown={toggle}
-              onClick={toggle}
-              onTouchEnd={toggle}
-              value={displayValue()}
-              onChange={(e) => {
-                onChange(null);
-                setQuery(e.target.value);
-              }}
-            />
+    <div className='dropdown'>
+      <div className='control'>
+        <div className='selected-value'>
+          <input
+            type='text'
+            ref={ref}
+            placeholder={value ? value[label] : prompt}
+            value={displayValue()}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              onChange(null);
+            }}
+            onClick={toggle}
+            onTouchEnd={toggle}
+          />
+        </div>
+        <div className={`arrow ${open ? "open" : null}`} />
+      </div>
+      <div className={`options ${open ? "open" : null}`}>
+        {filter(options).map((option) => (
+          <div
+            key={option[id]}
+            className={`option ${
+              value === option ? "selected" : null
+            }`}
+            onClick={() => selectOption(option)}
+            onTouchEnd={() => selectOption(option)}
+          >
+            {option[label]}
           </div>
-          <div className={`arrow ${open ? "open" : ""}`} />
-        </div>
-        <div className={`options ${open ? "open" : ""}`}>
-          {filter(options).map((option) => (
-            <div
-              className={`option ${
-                value === option ? "selected" : ""
-              }`}
-              onMouseDown={() => selectOption(option)}
-              onTouchEnd={() => selectOption(option)}
-              onClick={() => selectOption(option)}
-            >
-              {option[label]}
-            </div>
-          ))}
-        </div>
+        ))}
       </div>
     </div>
   );

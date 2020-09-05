@@ -1,16 +1,21 @@
 import React, { useState } from "react";
-import countries from "../data/countries.json";
+
 import Dropdown from "./dropdown";
+import data from "../data/animals.json";
 
 export default function App() {
   const [value, setValue] = useState(null);
+
   return (
-    <Dropdown
-      prompt='Select country'
-      value={value}
-      onChange={setValue}
-      options={countries}
-      label='name'
-    />
+    <div style={{ width: 200 }}>
+      <Dropdown
+        prompt='Select animal...'
+        options={data}
+        id='id'
+        label='name'
+        value={value}
+        onChange={(val) => setValue(val)}
+      />
+    </div>
   );
 }
