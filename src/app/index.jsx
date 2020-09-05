@@ -1,11 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import Dropdown from "./dropdown";
-import countries from "../data/countries";
+import data from "../data/countries";
 
 export default function App() {
+  const [value, setValue] = useState(null);
+
   return (
     <div style={{ width: 200 }}>
-      <Dropdown countries={countries} />
+      <Dropdown
+        prompt='Select country...'
+        options={data}
+        value={value}
+        onChange={(val) => setValue(val)}
+      />
     </div>
   );
 }
