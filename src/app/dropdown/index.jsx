@@ -14,11 +14,11 @@ export default function Dropdown({
   const ref = useRef(null);
 
   useEffect(() => {
-    document.addEventListener("click", close);
-    return () => document.removeEventListener("click", close);
+    document.addEventListener("click", toggle);
+    return () => document.removeEventListener("click", toggle);
   }, []);
 
-  function close(e) {
+  function toggle(e) {
     setOpen(e && e.target === ref.current);
   }
 
@@ -33,6 +33,12 @@ export default function Dropdown({
     if (query.length > 0) return query;
     if (value) return value[label];
     return "";
+  }
+
+  function selectOption(option) {
+    setQuery("");
+    onChange(option);
+    setOpen(false);
   }
 
   return (
@@ -51,7 +57,8 @@ export default function Dropdown({
               setQuery(e.target.value);
               onChange(null);
             }}
-            onClick={() => setOpen((prev) => !prev)}
+            onClick={toggle}
+            onTouchEnd={toggle}
           />
         </div>
         <div className={`arrow ${open ? "open" : null}`} />
@@ -63,11 +70,8 @@ export default function Dropdown({
             className={`option ${
               value === option ? "selected" : null
             }`}
-            onClick={() => {
-              setQuery("");
-              onChange(option);
-              setOpen(false);
-            }}
+            onClick={() => selectOption(option)}
+            onTouchEnd={() => selectOption(option)}
           >
             {option[label]}
           </div>
