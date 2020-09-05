@@ -1,5 +1,11 @@
 import React from "react";
+import Dropdown from "./dropdown";
+import countries from "../data/countries";
 
 export default function App() {
-  return <div>Start here</div>;
+  return (
+    <div style={{ width: 200 }}>
+      <Dropdown countries={countries} />
+    </div>
+  );
 }
